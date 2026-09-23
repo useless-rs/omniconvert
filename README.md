@@ -111,9 +111,12 @@ or gradient spheres. Assets in `brand/`: `logo.svg` (lockup), `mark.svg`
 (icon-only), `logo-mono.svg` (single-color), `favicon.svg` (16px-optimized),
 `tokens.css` (dark default + light mapping — the single source of truth).
 
-**Palette:** one accent `#7C5CFF` (violet), gradient partner `#22D3EE` (cyan),
-on dark `#0B0E17/#12172A`, text `#E8ECFF`, muted `#93A0C4`. Functional:
-`#34D399/#F87171/#FBBF24`. Type: Inter/system-ui + ui-monospace for code.
+**Palette:** one accent `#7C5CFF` (violet, graphics/large type only),
+action violet `#6547F0` (white text = 5.66:1, buttons/links), cyan `#22D3EE`
+(gradient partner), on dark `#0B0E17/#12172A`, text `#E8ECFF` (16.41:1),
+muted `#93A0C4` (7.40:1). Borders `#5A6694` dark / `#6B87A3` light (≥3:1,
+inputs must be identifiable). Light muted `#55677E` (5.41:1). Type: Inter/
+system-ui + ui-monospace for code. Full audit: cycle 5 log below.
 
 **Voice:** explain, don't sell. Errors state what + why + exact fix.
 Banned: revolutionary, seamless, next-generation, disrupt.
@@ -127,6 +130,7 @@ gradient only in mark, hero headline, progress bars.
 - [16] #12 Round-trip property tests (csv→json→csv, png→jpg→png) — DONE (cycle 2)
 - [12] #11 `omni doctor` command (deps + PATH + versions) — DONE (cycle 3)
 - [12] #5 Refine `icons/icon.png` from official mark (placeholder now) — DONE (cycle 4)
+- [12] #10 Light-theme QA pass (contrast ≥ 4.5:1) — DONE (cycle 5)
 - [12] #4 OG card 1200×630 + PWA icon ladder from SVG
 - [12] #5 Refine `icons/icon.png` from official mark (placeholder now)
 - [12] #10 Light-theme QA pass (contrast ≥ 4.5:1)
@@ -140,6 +144,8 @@ gradient only in mark, hero headline, progress bars.
 
 ## Changelog
 
+- **Unreleased (cycle 5):** contrast audit fixes (action violet, visible
+  input borders, light muted darkened — all pairs now pass).
 - **Unreleased (cycle 4):** real icon set from the brand mark (32/128/256/512
   RGBA PNGs via ImageMagick, `bundle.icon` wired, browser favicon).
 - **Unreleased (cycle 3):** `omni doctor` (tool versions, PATH sanity,
@@ -154,6 +160,14 @@ gradient only in mark, hero headline, progress bars.
 
 ## Improvement log
 
+- **Cycle 5 — 2026-09-23 (contrast QA):** computed WCAG ratios for all 17
+  token pairs (4.5:1 text, 3:1 large/UI). Found 4 real failures: input borders
+  1.23–1.41:1 (must identify components per 1.4.11), CTA white-on-violet 4.35,
+  light muted 4.45 (unrounded → fails). Fixed: `--oc-line` → `#5A6694` /
+  `#6B87A3`, new `--oc-action #6547F0` for text-bearing surfaces, light muted
+  → `#55677E`. Ratios now recorded as comments in `tokens.css` so the values
+  can't regress silently. `ltxt/pri` 4.11 documented as a forbidden non-pair.
+  Frontend rebuilt. Next: #3 ffmpeg progress or #6 native xlsx.
 - **Cycle 4 — 2026-09-23 (app icon):** research → match `tauri icon` default
   output (32/128/128@2x/icon.png, square RGBA 32bpp); `.icns/.ico` need
   platform tooling (still open). Rendered from `brand/favicon.svg`

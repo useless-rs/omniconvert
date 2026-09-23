@@ -1,7 +1,7 @@
 :root {
-  --bg: #0b0e17; --panel: #12172a; --line: #232c4d;
+  --bg: #0b0e17; --panel: #12172a; --line: #5a6694;
   --txt: #e8ecff; --mut: #93a0c4;
-  --acc1: #7c5cff; --acc2: #22d3ee;
+  --acc1: #7c5cff; --acc2: #22d3ee; --action: #6547f0;
   --ok: #34d399; --err: #f87171; --warn: #fbbf24;
 }
 * { box-sizing: border-box; }
@@ -14,7 +14,7 @@ body { margin: 0; background: var(--bg); color: var(--txt); font: 15px/1.5 syste
 .bar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: center; margin: 18px 0; }
 select, button, input { background: var(--panel); color: var(--txt); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font-size: 14px; }
 button { cursor: pointer; }
-button.primary { background: linear-gradient(90deg, var(--acc1), var(--acc2)); border: none; font-weight: 700; }
+button.primary { background: linear-gradient(90deg, var(--action), var(--acc2)); border: none; font-weight: 700; }
 button:disabled { opacity: .5; cursor: default; }
 .drop { border: 2px dashed var(--line); border-radius: 18px; padding: 44px 20px; text-align: center; color: var(--mut); background: var(--panel); transition: .15s; }
 .drop.over { border-color: var(--acc2); color: var(--txt); }
