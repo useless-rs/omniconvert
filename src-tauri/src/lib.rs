@@ -1,5 +1,5 @@
 mod commands;
-mod watcher;
+pub mod watcher;
 
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -24,7 +24,8 @@ pub fn run() {
             commands::get_tool_status,
             commands::get_presets,
             commands::queue_add,
-            commands::queue_list
+            commands::queue_list,
+            commands::watch_start
         ])
         .run(tauri::generate_context!())
         .expect("failed to run OmniConvert");

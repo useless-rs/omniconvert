@@ -125,6 +125,7 @@ gradient only in mark, hero headline, progress bars.
 
 - [16] #1 MVP brand system — DONE (cycle 1)
 - [16] #12 Round-trip property tests (csv→json→csv, png→jpg→png) — DONE (cycle 2)
+- [12] #11 `omni doctor` command (deps + PATH + versions) — DONE (cycle 3)
 - [12] #4 OG card 1200×630 + PWA icon ladder from SVG
 - [12] #5 Refine `icons/icon.png` from official mark (placeholder now)
 - [12] #10 Light-theme QA pass (contrast ≥ 4.5:1)
@@ -138,6 +139,9 @@ gradient only in mark, hero headline, progress bars.
 
 ## Changelog
 
+- **Unreleased (cycle 3):** `omni doctor` (tool versions, PATH sanity,
+  writability, engine self-test, exit 1 on issues); wired dead `watcher`
+  code (`watch_start` Tauri command, CLI shares `convert_dropped`).
 - **Unreleased (cycle 2):** 8 round-trip integration tests
   (`crates/omni-core/tests/roundtrip.rs`, isolated tempdirs, no external tools);
   untracked generated `src-tauri/gen/` schemas (gitignored).
@@ -147,6 +151,14 @@ gradient only in mark, hero headline, progress bars.
 
 ## Improvement log
 
+- **Cycle 3 — 2026-09-23 (diagnosability):** research → doctor commands earn
+  trust via per-check status + versions + actionable fixes + honest summary
+  (brew/flutter pattern). `omni doctor` checks 10 tools (3s-timeout version
+  probes), PATH dangling entries, temp writability, live csv→json self-test;
+  exits 1 with issue count. Also fixed 2 dead-code warnings by wiring
+  `watcher` into both shells. Verified: `cargo check --all-targets` clean,
+  doctor output exact on this machine (4 ok, 6 miss as expected). Next: #3
+  streaming ffmpeg progress or #4 OG/PWA assets.
 - **Cycle 2 — 2026-09-23 (correctness net):** research → example-based
   integration tests in `tests/` with `tempfile` isolation beat proptest here
   (deterministic, fast, no new harness; proptest deferred to backlog). 8 tests:

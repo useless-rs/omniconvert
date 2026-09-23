@@ -21,6 +21,8 @@ enum Cmd {
     Targets { from: String },
     /// Show external-tool status (ffmpeg, magick, pandoc...)
     Tools,
+    /// Diagnose the setup: tools + versions, PATH, writability, engine self-test
+    Doctor,
     /// Watch a folder and auto-convert arrivals
     Watch { dir: PathBuf, to: String, #[arg(long)] out_dir: Option<PathBuf> },
 }
@@ -80,6 +82,11 @@ async fn main() -> anyhow::Result<()> {
                 println!("{mark} {:<14} {}", t.binary, if t.installed { t.path.unwrap_or_default() } else { t.install_hint });
             }
         }
+        Cmd::Doctor => {
+            if !run_doctor().await {
+                std::process::exit(1);
+            }
+        }
         Cmd::Watch { dir, to, out_dir } => {
             let out = out_dir.unwrap_or_else(|| dir.clone());
             // watcher lives in the tauri crate; inline minimal loop here via omni watcher logic
@@ -104,10 +111,8 @@ async fn watch_loop(dir: &PathBuf, to: &str, out: &PathBuf) -> anyhow::Result<()
                 if matches!(ev.kind, notify::EventKind::Create(_) | notify::EventKind::Modify(_)) {
                     for p in ev.paths {
                         if p.is_file() {
-                            let stem = p.file_stem().and_then(|s| s.to_str()).unwrap_or("file").to_string();
-                            let dest = out.join(format!("{stem}.{to}"));
-                            match omni_core::convert_file(&p, &dest).await {
-                                Ok(()) => println!("OK {} -> {}", p.display(), dest.display()),
+                            match omniconvert_lib::watcher::convert_dropped(&p, to, out).await {
+                                Ok(dest) => println!("OK {} -> {}", p.display(), dest.display()),
                                 Err(e) => eprintln!("FAILED {}: {e}", p.display()),
                             }
                         }
@@ -120,4 +125,94 @@ async fn watch_loop(dir: &PathBuf, to: &str, out: &PathBuf) -> anyhow::Result<()
         }
     }
     Ok(())
+}
+
+async fn tool_version(bin: &str) -> Option<String> {
+    let out = tokio::time::timeout(
+        std::time::Duration::from_secs(3),
+        tokio::process::Command::new(bin).arg("--version").output(),
+    )
+    .await
+    .ok()?
+    .ok()?;
+    let text = format!(
+        "{}{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    text.lines().next().map(|l| {
+        let l = l.trim().to_string();
+        l.chars().take(80).collect()
+    })
+}
+
+fn dir_writable(p: &std::path::Path) -> bool {
+    let probe = p.join(".omni-write-test");
+    std::fs::create_dir_all(p)
+        .and_then(|_| std::fs::write(&probe, b"ok"))
+        .is_ok()
+        && std::fs::remove_file(&probe).is_ok()
+}
+
+async fn run_doctor() -> bool {
+    let mut issues = 0;
+    println!("== external tools ==");
+    for t in omni_core::deps::check_all() {
+        if t.installed {
+            match tool_version(&t.binary).await {
+                Some(v) if !v.is_empty() => println!("[ok] {:<14} {v}", t.binary),
+                _ => println!("[ok] {:<14} installed (version unknown)", t.binary),
+            }
+        } else {
+            issues += 1;
+            println!("[miss] {:<14} {}", t.binary, t.install_hint);
+        }
+    }
+    println!("== environment ==");
+    if let Some(paths) = std::env::var_os("PATH") {
+        let dirs: Vec<_> = std::env::split_paths(&paths).collect();
+        let dead: Vec<_> = dirs.iter().filter(|d| !d.is_dir()).collect();
+        if dead.is_empty() {
+            println!("[ok] PATH has {} entries, all exist", dirs.len());
+        } else {
+            issues += 1;
+            println!("[warn] PATH has {} dangling entries:", dead.len());
+            for d in dead.iter().take(5) {
+                println!("       - {}", d.display());
+            }
+        }
+    }
+    let tmp = std::env::temp_dir();
+    if dir_writable(&tmp) {
+        println!("[ok] temp dir writable ({})", tmp.display());
+    } else {
+        issues += 1;
+        println!("[fail] temp dir not writable: {}", tmp.display());
+    }
+    println!("== engine self-test ==");
+    let probe_dir = tmp.join(format!("omni-doctor-{}", std::process::id()));
+    let _ = std::fs::create_dir_all(&probe_dir);
+    let src = probe_dir.join("probe.csv");
+    let dst = probe_dir.join("probe.json");
+    match std::fs::write(&src, b"a,b\n1,2\n") {
+        Ok(()) => match omni_core::convert_file(&src, &dst).await {
+            Ok(()) => println!("[ok] native csv->json self-test passed"),
+            Err(e) => {
+                issues += 1;
+                println!("[fail] engine self-test: {e}");
+            }
+        },
+        Err(e) => {
+            issues += 1;
+            println!("[fail] self-test setup: {e}");
+        }
+    }
+    let _ = std::fs::remove_dir_all(&probe_dir);
+    println!("== summary ==");
+    if issues == 0 {
+        println!("ready: native conversions work, all tools present.");
+    } else {
+        println!("{issues} issue(s): native conversions still work; pairs needing the missing tools will fail with install hints.");
+    }
+    issues == 0
 }

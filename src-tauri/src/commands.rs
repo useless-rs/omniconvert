@@ -54,3 +54,13 @@ pub async fn queue_add(state: tauri::State<'_, Arc<Mutex<OmniState>>>, input: St
 pub async fn queue_list(state: tauri::State<'_, Arc<Mutex<OmniState>>>) -> Result<Vec<omni_core::Job>, String> {
     Ok(state.lock().await.queue.list().await)
 }
+
+#[tauri::command]
+pub async fn watch_start(dir: String, to: String, out_dir: String) -> Result<String, String> {
+    use std::path::PathBuf;
+    let (d, t, o) = (PathBuf::from(dir), to.clone(), PathBuf::from(out_dir));
+    tauri::async_runtime::spawn(async move {
+        let _ = crate::watcher::watch_folder(&d, &t, &o).await;
+    });
+    Ok(format!("watching for *.{to}"))
+}
