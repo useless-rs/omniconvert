@@ -133,6 +133,7 @@ gradient only in mark, hero headline, progress bars.
 - [12] #10 Light-theme QA pass (contrast ≥ 4.5:1) — DONE (cycle 5)
 - [12] #4 OG card 1200×630 + PWA icon ladder from SVG — card DONE (cycle 6)
 - [11] #3 Streaming ffmpeg progress (% bars from stderr) — DONE (cycle 7)
+- [11] #6 Native xlsx (calamine + rust-xlsxwriter) — read DONE (cycle 9)
 - [12] #4 OG card 1200×630 + PWA icon ladder from SVG
 - [12] #5 Refine `icons/icon.png` from official mark (placeholder now)
 - [12] #10 Light-theme QA pass (contrast ≥ 4.5:1)
@@ -146,6 +147,9 @@ gradient only in mark, hero headline, progress bars.
 
 ## Changelog
 
+- **Unreleased (cycle 9):** native spreadsheet reading (calamine):
+  xlsx/xls/ods → csv/json/yaml/txt/md, no LibreOffice; container-aware
+  detection (OOXML ≠ zip).
 - **Unreleased (cycle 8):** Anthropic rebrand (palette, Poppins/Lora stacks,
   recolored logo set, icons, OG card, CTA now solid orange).
 - **Unreleased (cycle 7):** live ffmpeg progress (`omni: 42% (00:01:12/…)`
@@ -166,6 +170,14 @@ gradient only in mark, hero headline, progress bars.
 
 ## Improvement log
 
+- **Cycle 9 — 2026-09-23 (native sheets):** research → calamine is the pure-
+  Rust standard (xls/xlsx/xlsm/xlsb/ods). New `native_sheet` adapter (first
+  sheet → csv/json/yaml/txt/md via shared `convert_value`), registry edges,
+  engine route. Fixed a real detection bug en route: OOXML files are ZIPs, so
+  `infer` reported every xlsx as `zip` — now zip magic + known extension +
+  container probe (`[Content_Types].xml`) resolves xlsx/docx/pptx/odt/epub.
+  Fixture `tests/fixtures/sample.xlsx` built from stdlib python (hermetic).
+  15 tests green. Next: xlsx *writing*, #7 tray, or #8 OCR.
 - **Cycle 8 — 2026-09-23 (Anthropic rebrand):** applied the brand-guidelines
   skill across every surface: warm neutrals, Coral/Blue/Green accents, Poppins
   display + Lora body (Liberation fallbacks where the fonts aren't installed).

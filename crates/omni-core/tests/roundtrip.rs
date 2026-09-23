@@ -134,3 +134,41 @@ async fn impossible_pair_fails_with_actionable_error() {
         "error names the missing tool or the gap: {msg}"
     );
 }
+
+fn fixture_xlsx(dir: &TempDir) -> PathBuf {
+    let src = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/sample.xlsx");
+    let dst = dir.path().join("sample.xlsx");
+    std::fs::copy(&src, &dst).expect("copy fixture");
+    dst
+}
+
+#[tokio::test]
+async fn xlsx_detected_by_container_not_as_zip() {
+    let d = dir();
+    let xlsx = fixture_xlsx(&d);
+    let det = detect(&xlsx).expect("detect");
+    assert_eq!(det.format_id, "xlsx", "zip container resolved via extension+probe, got {}", det.format_id);
+}
+
+#[tokio::test]
+async fn xlsx_to_csv_reads_first_sheet() {
+    let d = dir();
+    let xlsx = fixture_xlsx(&d);
+    let out = d.path().join("out.csv");
+    convert_file(&xlsx, &out).await.expect("xlsx->csv");
+    let text = read(&out);
+    assert!(text.contains("ada") && text.contains("grace"), "rows present: {text}");
+    assert!(text.contains("name"), "header present: {text}");
+}
+
+#[tokio::test]
+async fn xlsx_to_json_maps_header_to_values() {
+    let d = dir();
+    let xlsx = fixture_xlsx(&d);
+    let out = d.path().join("out.json");
+    convert_file(&xlsx, &out).await.expect("xlsx->json");
+    let v: serde_json::Value = serde_json::from_str(&read(&out)).expect("valid json");
+    let rows = v.as_array().expect("array of objects");
+    assert_eq!(rows.len(), 2);
+    assert_eq!(rows[0]["name"], serde_json::Value::String("ada".into()));
+}

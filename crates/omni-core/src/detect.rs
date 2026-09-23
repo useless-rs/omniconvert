@@ -17,6 +17,11 @@ pub fn detect(path: &Path) -> anyhow::Result<Detected> {
     // 1. magic bytes via `infer`
     if let Some(kind) = infer::get(&bytes) {
         let mime = kind.mime_type().to_string();
+        if mime == "application/zip" {
+            if let Some(zippy) = detect_zippy(path) {
+                return Ok(zippy);
+            }
+        }
         let by_mime = crate::formats::all_formats()
             .into_iter()
             .find(|f| f.mime == mime);
@@ -61,8 +66,32 @@ pub fn detect(path: &Path) -> anyhow::Result<Detected> {
     })
 }
 
-fn sniff_text_or_binary(path: &Path, bytes: &[u8]) -> String {
-    // content looks like known text formats?
+fn detect_zippy(path: &Path) -> Option<Detected> {
+    let ext = path.extension().and_then(|s| s.to_str())?.to_lowercase();
+    let fmt = find_by_extension(&ext)?;
+    let zippy = matches!(
+        fmt.id.as_str(),
+        "xlsx" | "xlsm" | "ods" | "docx" | "pptx" | "odt" | "epub"
+    );
+    if !zippy {
+        return None;
+    }
+    let file = std::fs::File::open(path).ok()?;
+    let mut zip = zip::ZipArchive::new(file).ok()?;
+    let probe = match fmt.id.as_str() {
+        "ods" | "odt" => "mimetype",
+        _ => "[Content_Types].xml",
+    };
+    zip.by_name(probe).ok()?;
+    Some(Detected {
+        format_id: fmt.id.clone(),
+        mime: fmt.mime.clone(),
+        confidence: 0.9,
+        method: "zip-container+extension".into(),
+    })
+}
+
+fn sniff_text_or_binary(path: &Path, bytes: &[u8]) -> String {    // content looks like known text formats?
     let head = String::from_utf8_lossy(&bytes[..bytes.len().min(2048)]).to_string();
     let t = head.trim_start();
     if t.starts_with('{') || t.starts_with('[') {

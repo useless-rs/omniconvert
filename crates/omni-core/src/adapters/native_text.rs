@@ -64,7 +64,7 @@ pub async fn convert(from: &str, to: &str, input: &Path, output: &Path) -> Resul
     };
 
     if let Some(v) = value {
-        return write_value(v, to, output).await;
+        return convert_value(v, to, output).await;
     }
 
     // raw-text conversions
@@ -105,7 +105,7 @@ pub async fn convert(from: &str, to: &str, input: &Path, output: &Path) -> Resul
     }
 }
 
-async fn write_value(v: serde_json::Value, to: &str, output: &Path) -> Result<()> {
+pub async fn convert_value(v: serde_json::Value, to: &str, output: &Path) -> Result<()> {
     match to {
         "json" => {
             std::fs::write(output, serde_json::to_string_pretty(&v).map_err(|e| ConverterError::Parse(e.to_string()))?)?;

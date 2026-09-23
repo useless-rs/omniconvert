@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::adapters::{external, native_archive, native_image, native_text};
+use crate::adapters::{external, native_archive, native_image, native_sheet, native_text};
 use crate::detect::{detect, Detected};
 use crate::error::Result;
 use crate::registry::ConversionGraph;
@@ -70,6 +70,7 @@ pub async fn convert_file(input: &Path, output: &Path) -> Result<()> {
         "native_text" | "native_data" => native_text::convert(&from, &to, input, output).await,
         "native_image" => native_image::convert(&from, &to, input, output).await,
         "native_archive" => native_archive::convert(&from, &to, input, output).await,
+        "native_sheet" => native_sheet::convert(&from, &to, input, output).await,
         "copy" => {
             std::fs::copy(input, output)?;
             Ok(())

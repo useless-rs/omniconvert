@@ -75,6 +75,12 @@ impl ConversionGraph {
         // subtitles
         self.add("srt", "vtt", "native_text", None);
         self.add("vtt", "srt", "native_text", None);
+        // spreadsheets, read natively (no LibreOffice needed)
+        for a in ["xlsx", "xls", "ods"] {
+            for b in ["csv", "json", "yaml", "txt", "md"] {
+                self.add(a, b, "native_sheet", None);
+            }
+        }
     }
 
     /// External-tool edges. Available only when the tool is installed;
