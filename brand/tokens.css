@@ -1,0 +1,38 @@
+/* OmniConvert design tokens — single source of truth (see brand/BRAND.md).
+   Dark-first. Light values provided in parallel from day one. */
+
+:root {
+  /* brand */
+  --oc-primary: #7c5cff;      /* vivid purple — the one accent */
+  --oc-accent: #22d3ee;       /* cyan — gradient partner only */
+  --oc-gradient: linear-gradient(90deg, #7c5cff, #22d3ee);
+
+  /* dark surfaces (default) */
+  --oc-bg: #0b0e17;
+  --oc-panel: #12172a;
+  --oc-line: #232c4d;
+  --oc-txt: #e8ecff;
+  --oc-mut: #93a0c4;
+
+  /* functional */
+  --oc-ok: #34d399;
+  --oc-err: #f87171;
+  --oc-warn: #fbbf24;
+
+  /* type */
+  --oc-font-ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --oc-font-mono: ui-monospace, "Cascadia Code", "JetBrains Mono", monospace;
+
+  /* shape + motion (feedback, not decoration) */
+  --oc-radius: 12px;
+  --oc-motion-fast: 120ms ease-out;
+  --oc-motion-med: 200ms ease-out;
+}
+
+[data-theme="light"] {
+  --oc-bg: #f6f7fb;
+  --oc-panel: #ffffff;
+  --oc-line: #e2e8f0;
+  --oc-txt: #0f172a;
+  --oc-mut: #64748b;
+}

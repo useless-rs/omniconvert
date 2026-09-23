@@ -1,0 +1,28 @@
+# Rust
+/target/
+**/target/
+*.rs.bk
+
+# Node / frontend
+node_modules/
+dist/
+*.local
+
+# Tauri
+src-tauri/target/
+src-tauri/WixTools/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# Env
+.env
+.env.local
