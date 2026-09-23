@@ -132,6 +132,7 @@ gradient only in mark, hero headline, progress bars.
 - [12] #5 Refine `icons/icon.png` from official mark (placeholder now) — DONE (cycle 4)
 - [12] #10 Light-theme QA pass (contrast ≥ 4.5:1) — DONE (cycle 5)
 - [12] #4 OG card 1200×630 + PWA icon ladder from SVG — card DONE (cycle 6)
+- [11] #3 Streaming ffmpeg progress (% bars from stderr) — DONE (cycle 7)
 - [12] #4 OG card 1200×630 + PWA icon ladder from SVG
 - [12] #5 Refine `icons/icon.png` from official mark (placeholder now)
 - [12] #10 Light-theme QA pass (contrast ≥ 4.5:1)
@@ -145,6 +146,8 @@ gradient only in mark, hero headline, progress bars.
 
 ## Changelog
 
+- **Unreleased (cycle 7):** live ffmpeg progress (`omni: 42% (00:01:12/…)`
+  on stderr; pure `-progress` parser with unit tests).
 - **Unreleased (cycle 6):** OG social card (`public/og-card.png`, meta tags).
 - **Unreleased (cycle 5):** contrast audit fixes (action violet, visible
   input borders, light muted darkened — all pairs now pass).
@@ -162,6 +165,12 @@ gradient only in mark, hero headline, progress bars.
 
 ## Improvement log
 
+- **Cycle 7 — 2026-09-23 (live progress):** ffmpeg jobs ran silent. Added
+  `adapters/ffmpeg_progress.rs` (pure `-progress`/`Duration:` parser, 4 unit
+  tests) + streaming runner (`-progress pipe:1`, 3-field percent lines on
+  stderr, tail of stderr on failure). Verified live: mp4→mkv printed
+  `omni: 98% (00:00:05/00:00:06)` → `100%` → OK. All 12 tests green.
+  Next: rebrand per Anthropic guidelines (user request).
 - **Cycle 6 — 2026-09-23 (social preview):** research → 1200×630, split
   layout, ≤60-char headline, 80px safe margins, PNG sRGB <1MB, width/height/
   alt + `summary_large_image` tags. Built with ImageMagick from brand assets;

@@ -1,4 +1,5 @@
 pub mod external;
+pub mod ffmpeg_progress;
 pub mod native_archive;
 pub mod native_image;
 pub mod native_text;

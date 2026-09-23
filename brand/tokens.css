@@ -1,27 +1,32 @@
-/* OmniConvert design tokens — single source of truth (see brand/BRAND.md).
-   Dark-first. Light values provided in parallel from day one. */
+/* OmniConvert design tokens — Anthropic brand styling.
+   Dark #141413 / Light #FAF9F5 / Mid #B0AEA5 / Faint #E8E6DC.
+   Accents: Orange #D97757 (primary) / Blue #6A9BCC / Green #788C5D.
+   Type: Poppins (Arial fallback) display, Lora (Georgia fallback) body.
+   Ratios are measured (WCAG): keep values passing if edited. */
 
 :root {
   /* brand */
-  --oc-primary: #7c5cff;      /* vivid purple — graphics, large display type */
-  --oc-action: #6547f0;       /* text-bearing surfaces (buttons): white = 5.66:1 */
-  --oc-accent: #22d3ee;       /* cyan — gradient partner only */
-  --oc-gradient: linear-gradient(90deg, #6547f0, #22d3ee);
+  --oc-primary: #d97757;      /* coral — graphics, large display type */
+  --oc-action: #d97757;       /* text-bearing surfaces, dark text = 5.90:1 */
+  --oc-action-ink: #141413;
+  --oc-accent: #6a9bcc;       /* secondary accent, graphics + info */
+  --oc-gradient: linear-gradient(90deg, #d97757, #6a9bcc);
 
   /* dark surfaces (default) */
-  --oc-bg: #0b0e17;
-  --oc-panel: #12172a;
-  --oc-line: #5a6694;         /* input borders: 3.18 panel / 3.45 bg */
-  --oc-txt: #e8ecff;          /* 16.41 bg / 15.12 panel */
-  --oc-mut: #93a0c4;          /* 7.40 bg / 6.83 panel */
+  --oc-bg: #141413;
+  --oc-panel: #232220;
+  --oc-line: #b0aea5;         /* input borders: 7.15 vs panel */
+  --oc-txt: #faf9f5;          /* 17.50 vs bg */
+  --oc-mut: #b0aea5;          /* 8.29 vs bg */
 
-  /* functional */
-  --oc-ok: #34d399;
-  --oc-err: #f87171;
-  --oc-warn: #fbbf24;
+  /* functional (never color-alone; always paired with labels) */
+  --oc-ok: #788c5d;           /* 5.01 vs bg */
+  --oc-err: #d97757;          /* 5.90 vs bg */
+  --oc-warn: #6a9bcc;         /* 6.30 vs bg */
 
   /* type */
-  --oc-font-ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --oc-font-display: "Poppins", Arial, "Liberation Sans", sans-serif;
+  --oc-font-body: "Lora", Georgia, "Liberation Serif", serif;
   --oc-font-mono: ui-monospace, "Cascadia Code", "JetBrains Mono", monospace;
 
   /* shape + motion (feedback, not decoration) */
@@ -31,9 +36,9 @@
 }
 
 [data-theme="light"] {
-  --oc-bg: #f6f7fb;
+  --oc-bg: #faf9f5;
   --oc-panel: #ffffff;
-  --oc-line: #6b87a3;         /* 3.74 vs white */
-  --oc-txt: #0f172a;          /* 16.68 lbg / 17.85 lpanel */
-  --oc-mut: #55677e;          /* 5.41 lbg / 5.79 lpanel */
+  --oc-line: #8f8d84;         /* 3.33 vs white */
+  --oc-txt: #141413;          /* 17.50 vs lbg */
+  --oc-mut: #6e6c64;          /* 4.99 vs lbg; raw mid gray fails, do not revert */
 }

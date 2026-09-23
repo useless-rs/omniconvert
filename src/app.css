@@ -1,34 +1,39 @@
 :root {
-  --bg: #0b0e17; --panel: #12172a; --line: #5a6694;
-  --txt: #e8ecff; --mut: #93a0c4;
-  --acc1: #7c5cff; --acc2: #22d3ee; --action: #6547f0;
-  --ok: #34d399; --err: #f87171; --warn: #fbbf24;
+  --bg: #141413; --panel: #232220; --line: #b0aea5;
+  --txt: #faf9f5; --mut: #b0aea5;
+  --acc1: #d97757; --acc2: #6a9bcc; --action: #d97757; --action-ink: #141413;
+  --ok: #788c5d; --err: #d97757; --warn: #6a9bcc;
+  --font-display: "Poppins", Arial, "Liberation Sans", sans-serif;
+  --font-body: "Lora", Georgia, "Liberation Serif", serif;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--txt); font: 15px/1.5 system-ui, sans-serif; }
+body { margin: 0; background: var(--bg); color: var(--txt); font: 16px/1.6 var(--font-body); }
 #app { max-width: 1080px; margin: 0 auto; padding: 32px 20px 64px; }
 .hero { text-align: center; margin-bottom: 24px; }
-.hero h1 { font-size: 42px; margin: 0; letter-spacing: -1px; }
+.hero h1 { font-family: var(--font-display); font-size: 42px; font-weight: 700; margin: 0; letter-spacing: -0.5px; }
 .hero h1 .grad { background: linear-gradient(90deg, var(--acc1), var(--acc2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .hero p { color: var(--mut); margin: 8px 0 0; }
 .bar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: center; margin: 18px 0; }
-select, button, input { background: var(--panel); color: var(--txt); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font-size: 14px; }
+select, button, input { background: var(--panel); color: var(--txt); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font-size: 14px; font-family: var(--font-display); }
 button { cursor: pointer; }
-button.primary { background: linear-gradient(90deg, var(--action), var(--acc2)); border: none; font-weight: 700; }
+button.primary { background: var(--action); color: var(--action-ink); border: none; font-weight: 700; }
 button:disabled { opacity: .5; cursor: default; }
 .drop { border: 2px dashed var(--line); border-radius: 18px; padding: 44px 20px; text-align: center; color: var(--mut); background: var(--panel); transition: .15s; }
-.drop.over { border-color: var(--acc2); color: var(--txt); }
+.drop.over { border-color: var(--acc1); color: var(--txt); }
 table { width: 100%; border-collapse: collapse; margin-top: 18px; }
 th, td { text-align: left; padding: 10px; border-bottom: 1px solid var(--line); font-size: 14px; }
-.pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; border: 1px solid var(--line); }
+th { font-family: var(--font-display); }
+.pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; border: 1px solid var(--line); font-family: var(--font-display); }
 .pill.done { color: var(--ok); border-color: var(--ok); }
 .pill.failed { color: var(--err); border-color: var(--err); }
 .pill.running { color: var(--acc2); border-color: var(--acc2); }
-.prog { height: 6px; background: #1d2440; border-radius: 99px; overflow: hidden; min-width: 120px; }
+.prog { height: 6px; background: #2b2a28; border-radius: 99px; overflow: hidden; min-width: 120px; }
 .prog > div { height: 100%; background: linear-gradient(90deg, var(--acc1), var(--acc2)); }
-.log { margin-top: 18px; background: #080b13; border: 1px solid var(--line); border-radius: 12px; padding: 12px; min-height: 88px; font-family: ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
+.log { margin-top: 18px; background: #0c0c0b; border: 1px solid var(--line); border-radius: 12px; padding: 12px; min-height: 88px; font-family: ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; }
 .chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
 .tools { margin-top: 22px; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
 .tool { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: var(--panel); font-size: 13px; }
+.tool b { font-family: var(--font-display); }
+h3 { font-family: var(--font-display); }
 .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
 .dot.ok { background: var(--ok); } .dot.miss { background: var(--err); }

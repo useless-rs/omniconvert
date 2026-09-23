@@ -33,8 +33,20 @@ pub async fn convert_external(via: &str, from: &str, to: &str, input: &Path, out
     let bin = tool_binary(via);
     let inp = input.to_string_lossy().to_string();
     let out = output.to_string_lossy().to_string();
+    if via == "ffmpeg" {
+        let args: Vec<String> = vec![
+            "-y".into(),
+            "-hide_banner".into(),
+            "-nostats".into(),
+            "-progress".into(),
+            "pipe:1".into(),
+            "-i".into(),
+            inp,
+            out,
+        ];
+        return run_ffmpeg_with_progress(bin, &args).await;
+    }
     let args: Vec<String> = match via {
-        "ffmpeg" => vec!["-y".into(), "-i".into(), inp, out],
         "magick" => vec![inp, out],
         "pandoc" => vec![inp, "-o".into(), out],
         "libreoffice" => {
@@ -46,6 +58,71 @@ pub async fn convert_external(via: &str, from: &str, to: &str, input: &Path, out
     };
     let _ = (from, to);
     convert_via(bin, &args).await
+}
+
+async fn run_ffmpeg_with_progress(bin: &str, args: &[String]) -> Result<()> {
+    use super::ffmpeg_progress as fp;
+    use tokio::io::{AsyncBufReadExt, BufReader};
+    let mut child = tokio::process::Command::new(bin)
+        .args(args)
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+        .map_err(|_| ConverterError::ToolMissing {
+            tool: bin.into(),
+            install_hint: crate::deps::install_hint_for(bin),
+        })?;
+    let stderr_lines = std::sync::Arc::new(tokio::sync::Mutex::new(Vec::<String>::new()));
+    let child_stderr = child.stderr.take();
+    let child_stdout = child.stdout.take();
+    let err_task = tokio::spawn({
+        let lines = stderr_lines.clone();
+        async move {
+            if let Some(e) = child_stderr {
+                let mut rows = BufReader::new(e).lines();
+                while let Ok(Some(line)) = rows.next_line().await {
+                    lines.lock().await.push(line);
+                }
+            }
+        }
+    });
+    let mut total: Option<u64> = None;
+    let mut last_pct: Option<u32> = None;
+    if let Some(o) = child_stdout {
+        let mut rows = BufReader::new(o).lines();
+        while let Ok(Some(line)) = rows.next_line().await {
+            match fp::parse_progress_line(&line) {
+                Some(fp::ProgressEvent::Time(us)) => {
+                    if total.is_none() {
+                        total = fp::parse_duration(&stderr_lines.lock().await.join("\n"));
+                    }
+                    if let Some(t) = total {
+                        if let Some(p) = fp::percent(us, t).filter(|p| last_pct != Some(*p)) {
+                            last_pct = Some(p);
+                            eprintln!("omni: {p}% ({}/{})", fp::fmt_hms(us), fp::fmt_hms(t));
+                        }
+                    }
+                }
+                Some(fp::ProgressEvent::End) => eprintln!("omni: 100%"),
+                None => {}
+            }
+        }
+    }
+    let _ = err_task.await;
+    let status = child.wait().await.map_err(|e| ConverterError::ToolFailed {
+        tool: bin.into(),
+        stderr: e.to_string(),
+    })?;
+    if !status.success() {
+        let text = stderr_lines.lock().await.join("\n");
+        let tail: Vec<&str> = text.lines().rev().take(5).collect();
+        let tail: Vec<&str> = tail.into_iter().rev().collect();
+        return Err(ConverterError::ToolFailed {
+            tool: bin.into(),
+            stderr: format!("exit {status}\n{}", tail.join("\n")),
+        });
+    }
+    Ok(())
 }
 
 fn tool_binary(via: &str) -> &str {
