@@ -100,7 +100,7 @@ PRs welcome — especially new adapters. MIT (see LICENSE).
 
 ---
 
-## Brand (MVP brand sprint, cycle 1)
+## Brand (Anthropic styling, cycle 8)
 
 **Positioning:** OmniConvert is the universal file converter for power users
 that routes every format through one conversion graph — unlike single-purpose
@@ -111,12 +111,12 @@ or gradient spheres. Assets in `brand/`: `logo.svg` (lockup), `mark.svg`
 (icon-only), `logo-mono.svg` (single-color), `favicon.svg` (16px-optimized),
 `tokens.css` (dark default + light mapping — the single source of truth).
 
-**Palette:** one accent `#7C5CFF` (violet, graphics/large type only),
-action violet `#6547F0` (white text = 5.66:1, buttons/links), cyan `#22D3EE`
-(gradient partner), on dark `#0B0E17/#12172A`, text `#E8ECFF` (16.41:1),
-muted `#93A0C4` (7.40:1). Borders `#5A6694` dark / `#6B87A3` light (≥3:1,
-inputs must be identifiable). Light muted `#55677E` (5.41:1). Type: Inter/
-system-ui + ui-monospace for code. Full audit: cycle 5 log below.
+**Palette (Anthropic):** Dark `#141413`, Light `#FAF9F5`, Mid Gray `#B0AEA5`,
+Light Gray `#E8E6DC`. Accents: Orange `#D97757` (primary), Blue `#6A9BCC`,
+Green `#788C5D`. CTA: solid orange, dark text (5.90:1). Borders Mid Gray
+(7.15:1 dark) / `#8F8D84` light (3.33:1). Light muted `#6E6C64` (4.99:1).
+Type: Poppins (Arial fallback) display, Lora (Georgia fallback) body,
+ui-monospace for code. Full audit: cycle 5 + 8 logs below.
 
 **Voice:** explain, don't sell. Errors state what + why + exact fix.
 Banned: revolutionary, seamless, next-generation, disrupt.
@@ -146,8 +146,9 @@ gradient only in mark, hero headline, progress bars.
 
 ## Changelog
 
+- **Unreleased (cycle 8):** Anthropic rebrand (palette, Poppins/Lora stacks,
+  recolored logo set, icons, OG card, CTA now solid orange).
 - **Unreleased (cycle 7):** live ffmpeg progress (`omni: 42% (00:01:12/…)`
-  on stderr; pure `-progress` parser with unit tests).
 - **Unreleased (cycle 6):** OG social card (`public/og-card.png`, meta tags).
 - **Unreleased (cycle 5):** contrast audit fixes (action violet, visible
   input borders, light muted darkened — all pairs now pass).
@@ -165,6 +166,12 @@ gradient only in mark, hero headline, progress bars.
 
 ## Improvement log
 
+- **Cycle 8 — 2026-09-23 (Anthropic rebrand):** applied the brand-guidelines
+  skill across every surface: warm neutrals, Coral/Blue/Green accents, Poppins
+  display + Lora body (Liberation fallbacks where the fonts aren't installed).
+  Recolored logo set, icons, OG card; CTA is now solid orange with dark text
+  (white-on-orange fails at 3.12:1); all token pairs re-audited and passing.
+  Frontend rebuilt. Uncursed.
 - **Cycle 7 — 2026-09-23 (live progress):** ffmpeg jobs ran silent. Added
   `adapters/ffmpeg_progress.rs` (pure `-progress`/`Duration:` parser, 4 unit
   tests) + streaming runner (`-progress pipe:1`, 3-field percent lines on
