@@ -126,6 +126,7 @@ gradient only in mark, hero headline, progress bars.
 - [16] #1 MVP brand system — DONE (cycle 1)
 - [16] #12 Round-trip property tests (csv→json→csv, png→jpg→png) — DONE (cycle 2)
 - [12] #11 `omni doctor` command (deps + PATH + versions) — DONE (cycle 3)
+- [12] #5 Refine `icons/icon.png` from official mark (placeholder now) — DONE (cycle 4)
 - [12] #4 OG card 1200×630 + PWA icon ladder from SVG
 - [12] #5 Refine `icons/icon.png` from official mark (placeholder now)
 - [12] #10 Light-theme QA pass (contrast ≥ 4.5:1)
@@ -139,6 +140,8 @@ gradient only in mark, hero headline, progress bars.
 
 ## Changelog
 
+- **Unreleased (cycle 4):** real icon set from the brand mark (32/128/256/512
+  RGBA PNGs via ImageMagick, `bundle.icon` wired, browser favicon).
 - **Unreleased (cycle 3):** `omni doctor` (tool versions, PATH sanity,
   writability, engine self-test, exit 1 on issues); wired dead `watcher`
   code (`watch_start` Tauri command, CLI shares `convert_dropped`).
@@ -151,6 +154,14 @@ gradient only in mark, hero headline, progress bars.
 
 ## Improvement log
 
+- **Cycle 4 — 2026-09-23 (app icon):** research → match `tauri icon` default
+  output (32/128/128@2x/icon.png, square RGBA 32bpp); `.icns/.ico` need
+  platform tooling (still open). Rendered from `brand/favicon.svg`
+  (tile-based, favicon-first per cycle-1 principles); caught + fixed a lost
+  alpha channel on the 32px pass via `identify` verification. Browser tab
+  covered (`public/favicon.png` + link). Verified: `cargo check` (codegen
+  accepts set), `npm run build` (favicon in `dist/`). Left: `.icns/.ico`,
+  OG card (#4 remains).
 - **Cycle 3 — 2026-09-23 (diagnosability):** research → doctor commands earn
   trust via per-check status + versions + actionable fixes + honest summary
   (brew/flutter pattern). `omni doctor` checks 10 tools (3s-timeout version
