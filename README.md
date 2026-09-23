@@ -131,6 +131,7 @@ gradient only in mark, hero headline, progress bars.
 - [12] #11 `omni doctor` command (deps + PATH + versions) — DONE (cycle 3)
 - [12] #5 Refine `icons/icon.png` from official mark (placeholder now) — DONE (cycle 4)
 - [12] #10 Light-theme QA pass (contrast ≥ 4.5:1) — DONE (cycle 5)
+- [12] #4 OG card 1200×630 + PWA icon ladder from SVG — card DONE (cycle 6)
 - [12] #4 OG card 1200×630 + PWA icon ladder from SVG
 - [12] #5 Refine `icons/icon.png` from official mark (placeholder now)
 - [12] #10 Light-theme QA pass (contrast ≥ 4.5:1)
@@ -144,6 +145,7 @@ gradient only in mark, hero headline, progress bars.
 
 ## Changelog
 
+- **Unreleased (cycle 6):** OG social card (`public/og-card.png`, meta tags).
 - **Unreleased (cycle 5):** contrast audit fixes (action violet, visible
   input borders, light muted darkened — all pairs now pass).
 - **Unreleased (cycle 4):** real icon set from the brand mark (32/128/256/512
@@ -160,6 +162,13 @@ gradient only in mark, hero headline, progress bars.
 
 ## Improvement log
 
+- **Cycle 6 — 2026-09-23 (social preview):** research → 1200×630, split
+  layout, ≤60-char headline, 80px safe margins, PNG sRGB <1MB, width/height/
+  alt + `summary_large_image` tags. Built with ImageMagick from brand assets;
+  caught real defects by visual inspection (density-scaled 300px type, opaque
+  SVG raster, overflowing copy) and fixed all three. Verified in `dist/`.
+  Note: `og:image` needs an absolute URL on deploy. Next: #3 ffmpeg progress
+  or #6 native xlsx.
 - **Cycle 5 — 2026-09-23 (contrast QA):** computed WCAG ratios for all 17
   token pairs (4.5:1 text, 3:1 large/UI). Found 4 real failures: input borders
   1.23–1.41:1 (must identify components per 1.4.11), CTA white-on-violet 4.35,
