@@ -72,6 +72,19 @@ impl ConversionGraph {
                 }
             }
         }
+        // archives, fully native (zip/tar/gz/7z); rar stays external-only
+        for a in ["zip", "tar", "gz", "7z"] {
+            for b in ["zip", "tar", "gz", "7z", "txt"] {
+                if a != b {
+                    self.add(a, b, "native_archive", None);
+                }
+            }
+        }
+        for f in ["txt", "md", "json", "yaml", "toml", "xml", "csv", "png", "jpg", "bmp", "xlsx"] {
+            for b in ["tar", "gz", "7z"] {
+                self.add(f, b, "native_archive", None);
+            }
+        }
         // subtitles
         self.add("srt", "vtt", "native_text", None);
         self.add("vtt", "srt", "native_text", None);
@@ -131,13 +144,9 @@ impl ConversionGraph {
                 }
             }
         }
-        // archives
-        for a in ["zip", "tar", "gz", "7z", "rar"] {
-            for b in ["zip", "tar", "gz", "7z"] {
-                if a != b {
-                    self.add(a, b, "7z", Some("7z"));
-                }
-            }
+        // rar: proprietary format, read-only via external 7z (never native)
+        for b in ["zip", "tar", "gz", "7z"] {
+            self.add("rar", b, "7z", Some("7z"));
         }
         // ebooks
         for a in ["epub", "mobi", "azw3", "pdf", "txt"] {

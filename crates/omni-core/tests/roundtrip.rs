@@ -172,3 +172,51 @@ async fn xlsx_to_json_maps_header_to_values() {
     assert_eq!(rows.len(), 2);
     assert_eq!(rows[0]["name"], serde_json::Value::String("ada".into()));
 }
+
+#[tokio::test]
+async fn txt_to_tar_lists_bundle() {
+    let d = dir();
+    let src = write(&d, "hello.txt", b"hello archives\n");
+    let tar = d.path().join("out.tar");
+    convert_file(&src, &tar).await.expect("txt->tar");
+    assert!(tar.exists());
+    let listing = d.path().join("listing.txt");
+    convert_file(&tar, &listing).await.expect("tar->txt");
+    assert!(read(&listing).contains("hello.txt"), "tar lists the file");
+}
+
+#[tokio::test]
+async fn txt_to_gz_to_txt_is_lossless() {
+    let d = dir();
+    let src = write(&d, "hello.txt", b"hello gzip\n");
+    let gz = d.path().join("out.gz");
+    convert_file(&src, &gz).await.expect("txt->gz");
+    let back = d.path().join("back.txt");
+    convert_file(&gz, &back).await.expect("gz->txt");
+    assert_eq!(read(&back), "hello gzip\n");
+}
+
+#[tokio::test]
+async fn zip_to_tar_repacks_contents() {
+    let d = dir();
+    let src = write(&d, "hello.txt", b"hello repack\n");
+    let zip = d.path().join("mid.zip");
+    convert_file(&src, &zip).await.expect("txt->zip");
+    let tar = d.path().join("out.tar");
+    convert_file(&zip, &tar).await.expect("zip->tar");
+    let listing = d.path().join("listing.txt");
+    convert_file(&tar, &listing).await.expect("tar->txt");
+    assert!(read(&listing).contains("hello.txt"));
+}
+
+#[tokio::test]
+async fn txt_to_7z_lists_bundle() {
+    let d = dir();
+    let src = write(&d, "hello.txt", b"hello sevenz\n");
+    let seven = d.path().join("out.7z");
+    convert_file(&src, &seven).await.expect("txt->7z");
+    assert!(seven.exists());
+    let listing = d.path().join("listing.txt");
+    convert_file(&seven, &listing).await.expect("7z->txt");
+    assert!(read(&listing).contains("hello"), "7z lists the file: {}", read(&listing));
+}

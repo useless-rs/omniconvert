@@ -134,6 +134,7 @@ gradient only in mark, hero headline, progress bars.
 - [12] #4 OG card 1200×630 + PWA icon ladder from SVG — card DONE (cycle 6)
 - [11] #3 Streaming ffmpeg progress (% bars from stderr) — DONE (cycle 7)
 - [11] #6 Native xlsx (calamine + rust-xlsxwriter) — read DONE (cycle 9)
+- Native archives (zip/tar/gz/7z, zero external tools) — DONE (cycle 10)
 - [12] #4 OG card 1200×630 + PWA icon ladder from SVG
 - [12] #5 Refine `icons/icon.png` from official mark (placeholder now)
 - [12] #10 Light-theme QA pass (contrast ≥ 4.5:1)
@@ -147,6 +148,8 @@ gradient only in mark, hero headline, progress bars.
 
 ## Changelog
 
+- **Unreleased (cycle 10):** native archives — tar/gzip/7z join zip
+  (`tar` + `flate2` + `sevenz-rust2`). 7-Zip tool now needed only for RAR.
 - **Unreleased (cycle 9):** native spreadsheet reading (calamine):
   xlsx/xls/ods → csv/json/yaml/txt/md, no LibreOffice; container-aware
   detection (OOXML ≠ zip).
@@ -170,6 +173,14 @@ gradient only in mark, hero headline, progress bars.
 
 ## Improvement log
 
+- **Cycle 10 — 2026-09-23 (native archives):** per the native-first directive,
+  replaced the 7-Zip dependency with pure-Rust crates (`tar`, `flate2`,
+  `sevenz-rust2` maintained fork). `native_archive` rewritten around
+  extract→stage→pack: bundle/list/repack across zip/tar/gz/7z, gzip single-
+  stream semantics, zip-slip-safe entries. Registry: native clique, RAR stays
+  external-only (proprietary write — stated honestly). 19 tests green
+  (4 new archive tests). Next: audio→wav via symphonia, or PDF via
+  printpdf/pdf-extract.
 - **Cycle 9 — 2026-09-23 (native sheets):** research → calamine is the pure-
   Rust standard (xls/xlsx/xlsm/xlsb/ods). New `native_sheet` adapter (first
   sheet → csv/json/yaml/txt/md via shared `convert_value`), registry edges,
