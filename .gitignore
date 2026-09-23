@@ -11,6 +11,7 @@ dist/
 # Tauri
 src-tauri/target/
 src-tauri/WixTools/
+src-tauri/gen/
 *.log
 
 # OS

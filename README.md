@@ -124,7 +124,7 @@ gradient only in mark, hero headline, progress bars.
 ## Backlog (persistent — score = impact × (6−effort) − risk)
 
 - [16] #1 MVP brand system — DONE (cycle 1)
-- [16] #12 Round-trip property tests (csv→json→csv, png→jpg→png)
+- [16] #12 Round-trip property tests (csv→json→csv, png→jpg→png) — DONE (cycle 2)
 - [12] #4 OG card 1200×630 + PWA icon ladder from SVG
 - [12] #5 Refine `icons/icon.png` from official mark (placeholder now)
 - [12] #10 Light-theme QA pass (contrast ≥ 4.5:1)
@@ -138,12 +138,22 @@ gradient only in mark, hero headline, progress bars.
 
 ## Changelog
 
+- **Unreleased (cycle 2):** 8 round-trip integration tests
+  (`crates/omni-core/tests/roundtrip.rs`, isolated tempdirs, no external tools);
+  untracked generated `src-tauri/gen/` schemas (gitignored).
 - **Unreleased (cycle 1):** MVP brand system (`brand/` + this section).
 - **0.1.0 — 2026-09-23:** universal engine (detect/graph/native adapters/queue/
   deps/presets), Tauri v2 shell + `omni` CLI + watch mode, TS frontend.
 
 ## Improvement log
 
+- **Cycle 2 — 2026-09-23 (correctness net):** research → example-based
+  integration tests in `tests/` with `tempfile` isolation beat proptest here
+  (deterministic, fast, no new harness; proptest deferred to backlog). 8 tests:
+  csv/json/yaml/toml/image/zip/subtitle round-trips, wrong-extension detection,
+  actionable-error quality gate. Found nothing broken (TOML root-table bug was
+  caught in cycle-0 E2E). `cargo test -p omni-core`: 8 passed. Next: #3
+  streaming ffmpeg progress or #11 `omni doctor`.
 - **Cycle 1 — 2026-09-23 (branding):** web research → dev-tool brands win on
   credibility (substance, product-surface voice); logos must be favicon-first,
   mono-capable, SVG-mastered; colors as tokens with dark-mode parity. Delivered
